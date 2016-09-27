@@ -1,1 +1,1 @@
-web: sudo video
+web: video
