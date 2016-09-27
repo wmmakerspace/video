@@ -7,7 +7,7 @@ import (
     "github.com/wmmakerspace/data-stream-server"
 )
 
-var port = ":80"
+var port = ":8080"
 
 func main() {
     streamserver.Start("/video")
