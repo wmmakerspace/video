@@ -1,0 +1,16 @@
+{
+	"ImportPath": "github.com/wmmakerspace/video",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v74",
+	"Deps": [
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Comment": "v1.0.0-20-ga69d25b",
+			"Rev": "a69d25be2fe2923a97c2af6849b2f52426f68fc0"
+		},
+		{
+			"ImportPath": "github.com/wmmakerspace/data-stream-server",
+			"Rev": "ae2fb171e8f8b005b5e9ca39800a6d1cbed3d87f"
+		}
+	]
+}
