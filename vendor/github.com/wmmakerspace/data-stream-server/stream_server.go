@@ -18,6 +18,8 @@ var upgrader = websocket.Upgrader{
     },
 }
 
+var endpoint string
+var header []byte
 var sourceId = 1;
 var sourceIdMutex = &sync.Mutex{}
 var sources = make(map[string]map[*websocket.Conn]bool)
@@ -33,7 +35,7 @@ func DataInHandler(w http.ResponseWriter, r *http.Request) {
 
     ws, err := upgrader.Upgrade(w, r, nil)
 
-    http.HandleFunc("/data/out/" + idStr, DataOutHandler)
+    http.HandleFunc(endpoint + "/out/" + idStr, DataOutHandler)
 
     if err != nil {
         fmt.Println(err)
@@ -63,11 +65,22 @@ func DataOutHandler(w http.ResponseWriter, r *http.Request) {
         fmt.Println(err)
         return
     }
+
+    if header != nil {
+        if err := ws.WriteMessage(websocket.BinaryMessage, header); err != nil {
+            log.Println(err)
+            return
+        }
+    }
+
     sources[sourceId][ws] = true
     log.Println("new client connected to: " + sourceId)
+
 }
 
 func ListStreams(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Access-Control-Allow-Origin", "*") // CORS
+
     sourceIds := make([]string, 0, len(sources))
     for k := range sources {
         sourceIds = append(sourceIds, k)
@@ -76,7 +89,9 @@ func ListStreams(w http.ResponseWriter, r *http.Request) {
     encoder.Encode(sourceIds)
 }
 
-func Start(endpoint string) {
+func Start(e string, h []byte) {
+    endpoint = e
+    header = h
     http.HandleFunc(endpoint + "/list", ListStreams)
     http.HandleFunc(endpoint + "/in", DataInHandler)
 }
